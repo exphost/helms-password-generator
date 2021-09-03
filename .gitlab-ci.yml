@@ -1,0 +1,27 @@
+---
+stages:
+  - checks
+  - upload
+
+upload:
+  stage: upload
+  image:
+    name: alpine/helm:latest
+  before_script:
+    - apk add --no-cache ca-certificates git curl yq
+    - helm plugin install https://github.com/chartmuseum/helm-push.git
+    - helm repo add --username ${CI_REGISTRY_USER} --password ${CI_REGISTRY_PASSWORD} my-repo "${CI_API_V4_URL}/projects/6/packages/helm/stable"
+    - helm repo update
+  script:
+    - export VERSION=$(git describe --tags)
+    - sed -i "s/__VERSION__/$VERSION/" chart/Chart.yaml
+    - helm push chart my-repo
+
+lint:
+  stage: checks
+  image: alpine/helm:latest
+  before_script:
+  script:
+    - export VERSION=$(git describe --tags)
+    - sed -i "s/__VERSION__/$VERSION/" chart/Chart.yaml
+    - helm lint chart
