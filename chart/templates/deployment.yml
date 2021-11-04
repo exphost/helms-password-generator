@@ -17,5 +17,5 @@ spec:
       serviceAccount: password-generator
       containers:
         - name: renderer
-          image: registry.exphost.pl/exphost/password-generator:{{ .Chart.AppVersion }}
+          image: registry.gitlab.exphost.pl/exphost/password-generator:{{ .Chart.AppVersion }}
           imagePullPolicy: Always
